@@ -14,14 +14,19 @@ class BaseHandler(webapp.RequestHandler):
 
   def render(self, *path_components):
     self.response.out.write(template.render(os.path.join(template_path, *path_components), self.data))
-  
-class MainHandler(BaseHandler):
 
-  def get(self):
-    self.render('index.html')
+def handler_for(template_name):
+  class MainHandler(BaseHandler):
+    def get(self):
+      self.data.update(tab = template_name)
+      self.render(template_name + '.html')
+      
+  return MainHandler
 
 url_mapping = [
-  ('/', MainHandler),
+  ('/', handler_for('index')),
+  ('/iphone/', handler_for('iphone')),
+  ('/google-app-engine/', handler_for('google-app-engine')),
 ]
 
 def main():
